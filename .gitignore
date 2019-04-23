@@ -1,0 +1,14 @@
+*.pyc
+*.log
+*.txt
+!requirements.txt
+*.conf
+*.pdf
+
+# IDE files
+.buildpath
+.project
+.settings/
+.rules/
+
+
