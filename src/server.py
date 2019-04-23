@@ -2,10 +2,12 @@
 
 import json
 import bottle
+import time
 import os
 import sys
 from bottle import route, error, request, response, run, static_file, BaseRequest, hook
 #from security.token_auth import *
+from datastore.redis_datastore import RedisDataStore
 from security.cors import EnableCors
 #from controllers.static import StaticController
 from settings import *
@@ -35,16 +37,16 @@ def list_chatrooms():
     response.headers['Content-type'] = 'application/json'
     # TODO return number of users?
     return json.dumps(
-        [ 'One', 'Two', 'Tree' ]
+        [ 'Default', 'Development', 'DevOps', 'Databases' ]
     )
 
-@route('/api/chatrooms', method=['OPTIONS', 'POST'])
-def create_chatroom():
-    response.headers['Content-type'] = 'application/json'
-    # TODO check chatroom does not exist
-    return json.dumps(
-        [ 'One', 'Two', 'Tree' ]
-    )
+#@route('/api/chatrooms', method=['OPTIONS', 'POST'])
+#def create_chatroom():
+#    response.headers['Content-type'] = 'application/json'
+#    # TODO check chatroom does not exist
+#    return json.dumps(
+#        [ 'One', 'Two', 'Tree' ]
+#    )
 
 
 #@route('/api/chatrooms/<chatroom_id>/messages', method=['OPTIONS', 'GET'])
@@ -55,13 +57,27 @@ def create_chatroom():
 #    )
 
 
-@route('/api/chatrooms/<chatroom_id>/join', method=['OPTIONS', 'GET'])
+@route('/api/chatrooms/<chatroom_id>/messages', method=['OPTIONS', 'GET'])
 def get_messages(chatroom_id):
     response.headers['Content-type'] = 'application/json'
-    # TODO return 50 latest messages
-    return json.dumps(
-        [ 'Hello', 'World' ]
-    )
+    redis = RedisDataStore()
+    messages = redis.lrange('chat:'+ chatroom_id.lower() +':messages', 0, 50)
+    return json.dumps(messages)
+
+
+@route('/api/chatrooms/<chatroom_id>/messages', method=['OPTIONS', 'POST'])
+def new_message(chatroom_id):
+    response.headers['Content-type'] = 'application/json'
+    obj = request.json
+    payload = {
+        'm': obj['m'],
+        't': time.time(),
+        'r': str(chatroom_id)
+    }
+    key = json.dumps(payload)
+    redis = RedisDataStore()
+    redis.rpush('chat:'+ chatroom_id.lower() +':messages', key)
+    return key
 
 
 #@route('/static/comprobantes/<comprobante_id>', method='GET')
@@ -71,6 +87,10 @@ def get_messages(chatroom_id):
 @route('/css/<filename>')
 def serve_static_css(filename):
     return static_file(filename, root=os.path.join(ROOT_DIR, 'static', 'css'))
+
+@route('/js/<filename>')
+def serve_static_js(filename):
+    return static_file(filename, root=os.path.join(ROOT_DIR, 'static', 'js'))
 
 @route('/')
 def app_homepage(filename='index.html'):

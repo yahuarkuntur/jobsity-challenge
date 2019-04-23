@@ -18,14 +18,14 @@ class RedisDataStore:
     def set_value(self, key, value):
         self.conn.set(key, value)
 
+    def rpush(self, key, value):
+        self.conn.rpush(key, value)
+
+    def lrange(self, key, start, stop):
+        return self.conn.lrange(key, start, stop)
+
     def get_keys(self, key):
         return self.conn.keys(key)
-
-    def delete_key(self, key):
-        self.conn.delete(key)
-
-    def decrement(self, key, amount=1):
-        self.conn.decr(key, amount)
 
     def hget(self, key, field):
         return self.conn.hget(key, field)

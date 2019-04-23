@@ -7,10 +7,161 @@
     <meta name="author" content="">
     <title>Jobsity</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-theme.min.css" rel="stylesheet">
   </head>
   <body>
+
+    <div class="container">
+
+      <h1>Jobsity Chat</h1>
+      <hr/>
+
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Welcome to the chatroom: <strong id="chatroom-title"></strong></h3>
+          <ul id="chat-messages" class="list-group" style="overflow: auto; max-height: 200px;"></ul>
+          <div class="col-md-12" style="padding: 0px;">
+            <div class="form-group form-group-lg">
+                <input type="text" class="form-control" id="input-msg" placeholder="Type and press enter to send."/>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h3>Chat rooms</h3>
+          <ul id="chat-rooms" class="list-group" style="overflow: auto; max-height: 200px;"></ul>
+        </div>
+      </div>        
+
+    </div>
   
-  Jobsity chat
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script>
+
+      var chatroom = 'Default';
+      var messages = [];
+
+      function unix_to_time(timestamp) {
+        var date = new Date(timestamp*1000);
+        var hours = date.getHours();
+        var minutes = "0" + date.getMinutes();
+        var seconds = "0" + date.getSeconds();
+        var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+        return formattedTime;
+      }
+
+      function append_message(json) {
+        var time = unix_to_time(json.t);
+        var msg = 'User [' + time + ']: ' + json.m;
+       
+        // merge new messages, timestamp is our key
+        var existing = messages.find(function(msg) {
+          return msg.t == json.t;
+        });
+
+        if ( !existing ) {
+          messages.push(json);
+          $('#chat-messages').append('<li class="list-group-item">'+msg+'</li>');
+        }
+      }
+
+      function load_messages() {
+        $.ajax({
+          type: "GET",
+          url: "/api/chatrooms/"+chatroom+"/messages",
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: function(data){
+            console.log(data);
+            for(var i=0; i<data.length; i++) {
+              var json = JSON.parse(data[i]);
+              append_message(json);
+            }
+            $('#chat-messages').animate({ scrollTop: $('#chat-messages')[0].scrollHeight}, "slow");
+            $('#chatroom-title').text(chatroom);
+          },
+          error: function (jqXHR, status, error) {
+            console.log(status);
+            alert(error);
+          }
+        }); 
+      }
+
+      function load_chatrooms() {
+        $.ajax({
+          type: "GET",
+          url: "/api/chatrooms",
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: function(data){
+            console.log(data);
+            for(var i=0; i<data.length; i++) {
+              var active = "";
+              if (chatroom == data[i]) {
+                active = "active";
+              }
+              $('#chat-rooms').append('<a href="#" class="list-group-item '+ active +' chatroom-list-item" data-chatroomid="'+data[i]+'">'+data[i]+'</a>');
+            }
+            $('#chat-rooms').animate({ scrollTop: $('#chat-rooms')[0].scrollHeight}, "slow");
+          },
+          error: function (jqXHR, status, error) {
+            console.log(status);
+            alert(error);
+          }
+        }); 
+      }
+
+      $(function() {
+
+        setInterval(load_messages, 1000);
+        
+        load_messages();
+        load_chatrooms();
+        
+
+        $('#input-msg').focus();
+        $('#input-msg').keydown(function (e){
+          if(e.keyCode == 13){
+            e.preventDefault();
+            var el = $(this);
+            var msg = el.val();
+
+            $.ajax({
+              type: "POST",
+              url: "/api/chatrooms/"+chatroom+"/messages",
+              data: JSON.stringify({'m': msg }),
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              success: function(data){
+                console.log(data);
+                el.val('');
+                var msg = append_message(data);
+                //messages.push(msg);
+                $('#chat-messages').animate({ scrollTop: $('#chat-messages')[0].scrollHeight}, "slow");
+              },
+              error: function (jqXHR, status, error) {
+                console.log(status);
+                alert(error);
+              }
+            });            
+          }
+        });
+
+        // delegated events on parent item
+        $(document).on("click", '.chatroom-list-item', function(event) { 
+          event.preventDefault();
+          $(this).parent().find('a').removeClass('active');
+          $(this).addClass('active');
+          chatroom = $(event.target).data('chatroomid');
+          $('#chat-messages').empty();
+          messages = [];  // reset messages
+          load_messages();
+        });
+
+      });
+
+    </script>
 
   </body>
 </html>

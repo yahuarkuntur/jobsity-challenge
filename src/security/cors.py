@@ -13,10 +13,7 @@ class EnableCors(object):
             # CORS headers
             response.headers['Access-Control-Allow-Origin'] = CONFIG.get('server', 'allow-origin')
             response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, OPTIONS'
-            response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token, X-Factureasy-Key'
-            # react CORS headers
-            response.headers['Access-Control-Expose-Headers'] = 'X-Total-Count'
-
+            response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
             if bottle.request.method != 'OPTIONS':
                 # actual request; reply with the actual response
                 return fn(*args, **kwargs)
