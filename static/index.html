@@ -54,7 +54,7 @@
 
       function append_message(json) {
         var time = unix_to_time(json.t);
-        var msg = 'User [' + time + ']: ' + json.m;
+        var msg = json.u + ' [' + time + ']: ' + json.m;
        
         // merge new messages, timestamp is our key
         var existing = messages.find(function(msg) {

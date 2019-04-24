@@ -27,6 +27,13 @@ How to run the project:
 - The webpage will be server as default on `127.0.0.1:5000`.
 
 
+How to register users:
+
+To register users use the command `python src/register_user.py` and enter
+  the username and password. This command requires a valid bcrypt salt string 
+  to be provided in `config/main.config`.
+
+
 How to run the tests:
 ---------------------
 

@@ -3,6 +3,7 @@ host = 127.0.0.1
 port = 5000
 allow-origin = *
 log-level = INFO
+password-salt = ChangeMePlease
 
 [rabbitmq]
 vhost = jobsity

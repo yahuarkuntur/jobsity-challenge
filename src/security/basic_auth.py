@@ -1,18 +1,20 @@
 
 import bcrypt
 from datastore.redis_datastore import RedisDataStore
+from settings import *
 
 
 def check_password(username, password):
-    datastore = RedisDataStore()
-    emisor_password = datastore.hget(username, 'password')
-    emisor_salt = datastore.hget(username, 'salt')
+    key = 'chat:users:' + username
+    redis = RedisDataStore()
+    value = redis.get_value(key)
 
-    if emisor_password is None or emisor_salt is None:
+    if value is None:
         return False
 
-    hashed = bcrypt.hashpw(password.encode('utf8'), emisor_salt)
-    if hashed == emisor_password:
+    hashed = bcrypt.hashpw(password.encode('utf8'), CONFIG.get('server', 'password-salt'))
+
+    if value == hashed:
         return True
     return False
 

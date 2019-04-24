@@ -26,16 +26,18 @@ class Consumer(RabbitMQConsumer):
         # ack message
         super(Consumer, self).callback(ch, method, properties, body)
 
-        parser = CommandParser()
-        command = parser.parse(message)
-
-        if command == 'help':
-            response = 'Type /stock=stock_code to get stock quote.'
-        elif command is None:
-            response = 'The command is invalid.'
-        else:
-            webservice = Webservice(command)
-            response = webservice.call()
+        try:
+            parser = CommandParser()
+            command = parser.parse(message)
+            if command == 'help':
+                response = 'Type "/stock=stock_code" to get stock quote.'
+            elif command is None:
+                return
+            else:
+                webservice = Webservice(command)
+                response = webservice.call()
+        except Exception as ex:
+            response = str(ex)
 
         payload = {
             'u': 'Chatbot',

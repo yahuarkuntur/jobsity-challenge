@@ -16,8 +16,13 @@ class CommandParserTest(unittest.TestCase):
         command = parser.parse("/stock=aapl.us")
         self.assertEqual(command, 'aapl.us')
 
-        command = parser.parse("/stock= not a command")
-        self.assertEqual(command, None)
+        with self.assertRaises(Exception) as context:
+            parser.parse("/stock= not a command")
+            self.assertTrue('Unknown command' in context.exception)
+
+        with self.assertRaises(Exception) as context:
+            parser.parse("/not a command")
+            self.assertTrue('Unknown command' in context.exception)
 
         command = parser.parse("not a command")
         self.assertEqual(command, None)

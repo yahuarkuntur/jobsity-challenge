@@ -5,9 +5,10 @@ import bottle
 import time
 import os
 import sys
-from bottle import route, error, request, response, run, static_file
+from bottle import route, error, request, response, run, static_file, auth_basic
 from datastore.redis_datastore import RedisDataStore
 from security.cors import EnableCors
+from security.basic_auth import check_password
 from rabbitmq.producer import RabbitMQProducer
 from settings import *
 
@@ -52,7 +53,8 @@ def new_message(chatroom_id):
     payload = {
         'm': obj['m'],
         't': time.time(),
-        'r': str(chatroom_id)
+        'r': str(chatroom_id),
+        'u': request.auth[0],
     }
     value = json.dumps(payload)
     key = 'chat:' + chatroom_id.lower() + ':messages'
@@ -80,6 +82,7 @@ def serve_static_js(filename):
 
 
 @route('/')
+@auth_basic(check_password)
 def app_homepage(filename='index.html'):
     return static_file(filename, root=os.path.join(ROOT_DIR, 'static'))
 

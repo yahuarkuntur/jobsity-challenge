@@ -8,8 +8,6 @@ HELP_COMMAND = re.compile("^/help$", re.I)
 class CommandParser:
 
     def parse(self, message):
-        if not self.is_command(message):
-            return None
 
         result = STOCK_CODE_COMMAND.search(message)
         if result and 'command' in result.groupdict().keys():
@@ -18,6 +16,9 @@ class CommandParser:
         result = HELP_COMMAND.search(message)
         if result:
             return 'help'
+
+        if self.is_command(message):
+            raise Exception('Unknown command "%s"' % message)
 
         return None
 
