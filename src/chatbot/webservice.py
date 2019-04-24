@@ -7,7 +7,7 @@ from settings import *
 LOGGER = logging.getLogger(__name__)
 
 
-class Chatbot:
+class Webservice:
 
     def __init__(self, stock_id):
         self.stock_id = stock_id

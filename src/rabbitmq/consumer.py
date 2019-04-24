@@ -15,7 +15,7 @@ class RabbitMQConsumer(BaseRabbitMQ):
         self.channel.basic_qos(prefetch_count=1)
         self.channel.exchange_declare(
             exchange=self._exchange,
-            type='direct',
+            exchange_type='direct',
             durable=True
         )
         self.channel.queue_bind(

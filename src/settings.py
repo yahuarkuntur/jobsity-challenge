@@ -29,7 +29,7 @@ if 'CRITICAL' == CONFIG.get('server', 'log-level'):
 
 
 logging.basicConfig(
-    #filename=os.path.join(ROOT_DIR, 'logs', 'jobsity.log'),
+    # filename=os.path.join(ROOT_DIR, 'logs', 'jobsity.log'),
     level=LOG_LEVEL,
     format=LOG_FORMAT
 )

@@ -1,14 +1,13 @@
 
 import unittest
 import csv
-from chatbot.chatbot import *
-from settings import *
+from chatbot.webservice import Webservice
 
 
-class ChatbotTest(unittest.TestCase):
+class WebserviceTest(unittest.TestCase):
 
     def test_parse_response(self):
-        bot = Chatbot('aapl.us')
+        bot = Webservice('aapl.us')
         text = "Symbol,Date,Time,Open,High,Low,Close,Volume\nAAPL.US,2019-04-22,22:00:16,202.83,204.94,202.34,204.53,19439545"
         msg = bot.parse_response(text)
         self.assertEqual(msg, 'AAPL.US quote is $202.83 per share')
@@ -26,7 +25,7 @@ class ChatbotTest(unittest.TestCase):
         self.assertEqual(msg, 'AAPL.US quote is $202.83 per share')
 
     def test_download(self):
-        bot = Chatbot('aapl.us')
+        bot = Webservice('aapl.us')
         text = bot.download()
         lines = text.splitlines()
         contents = csv.reader(lines, delimiter=',')

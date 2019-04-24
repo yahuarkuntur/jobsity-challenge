@@ -36,6 +36,7 @@
   
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-notify.min.js"></script>
 
     <script>
 
@@ -82,8 +83,8 @@
             $('#chatroom-title').text(chatroom);
           },
           error: function (jqXHR, status, error) {
-            console.log(status);
-            alert(error);
+            console.log(error);
+            $.notify('An error has occurred.', {type: 'danger'});
           }
         }); 
       }
@@ -106,19 +107,27 @@
             $('#chat-rooms').animate({ scrollTop: $('#chat-rooms')[0].scrollHeight}, "slow");
           },
           error: function (jqXHR, status, error) {
-            console.log(status);
-            alert(error);
+            console.log(error);
+            $.notify('An error has occurred.', {type: 'danger'});
           }
         }); 
       }
 
       $(function() {
 
+        $.notifyDefaults({
+          placement: {
+            from: "top",
+            align: "center"
+            },
+            delay: 1000,
+            newest_on_top: true,
+        });
+
         setInterval(load_messages, 1000);
         
         load_messages();
-        load_chatrooms();
-        
+        load_chatrooms();        
 
         $('#input-msg').focus();
         $('#input-msg').keydown(function (e){
@@ -141,8 +150,8 @@
                 $('#chat-messages').animate({ scrollTop: $('#chat-messages')[0].scrollHeight}, "slow");
               },
               error: function (jqXHR, status, error) {
-                console.log(status);
-                alert(error);
+                console.log(error);
+                $.notify('An error has occurred.', {type: 'danger'});
               }
             });            
           }
