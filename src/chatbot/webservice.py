@@ -34,9 +34,9 @@ class Webservice:
         rows = list(contents)
         if len(rows) < 2:
             return None
-        if len(rows[1]) < 3:
+        if len(rows[1]) < 6:
             return None
-        value = rows[1][3]
+        value = rows[1][6]
         return "%s quote is $%s per share" % (self.stock_id.upper(), value)
 
 # EOF
