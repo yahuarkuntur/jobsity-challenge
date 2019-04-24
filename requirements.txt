@@ -1,0 +1,5 @@
+bottle==0.12.9
+redis==2.10.5
+requests==2.18.4
+pika==0.13.0
+python_bcrypt==0.3.2
