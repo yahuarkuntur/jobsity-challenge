@@ -5,7 +5,7 @@ import bottle
 import time
 import os
 import sys
-from bottle import route, error, request, response, run, static_file, auth_basic
+from bottle import route, error, request, response, static_file, auth_basic
 from datastore.redis_datastore import RedisDataStore
 from security.cors import EnableCors
 from security.basic_auth import check_password
