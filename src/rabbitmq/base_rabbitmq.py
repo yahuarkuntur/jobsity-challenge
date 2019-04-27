@@ -15,7 +15,7 @@ class BaseRabbitMQ(object):
             credentials=credentials,
             host=CONFIG.get('rabbitmq', 'host'),
             port=int(CONFIG.get('rabbitmq', 'port')),
-            virtual_host=CONFIG.get('rabbitmq', 'vhost')
+            virtual_host=str(CONFIG.get('rabbitmq', 'vhost'))
         )
         self.connection = pika.BlockingConnection(parameters)
         self.channel = self.connection.channel()

@@ -6,7 +6,7 @@ log-level = INFO
 password-salt = ChangeMePlease
 
 [rabbitmq]
-vhost = jobsity
+vhost = /
 username = guest
 password = guest
 host = localhost
